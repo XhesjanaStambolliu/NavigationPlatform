@@ -1,0 +1,101 @@
+version: '3.8'
+
+services:
+  # ASP.NET Core API service
+  api:
+    image: ${DOCKER_REGISTRY-}navigationplatform-api
+    build:
+      context: ..
+      dockerfile: docker-compose/Dockerfile
+    container_name: navigation-platform-api
+    environment:
+      # Database connection string for container environment
+      - ConnectionStrings__DefaultConnection=Server=db;Database=NavigationDB;User Id=sa;Password=NavigationP@ssw0rd!;TrustServerCertificate=True;
+      # Database migration options
+      - RESET_DATABASE_ON_MIGRATION_ERROR=true
+      # Set to use HTTP only
+      - ASPNETCORE_URLS=http://+:5000
+      # Development environment
+      - ASPNETCORE_ENVIRONMENT=Development
+      # OpenTelemetry configuration for containerized environment
+      - OpenTelemetry__Jaeger__Endpoint=http://jaeger:4317
+      - OpenTelemetry__Jaeger__Enabled=true
+    ports:
+      - "5000:5000"
+    volumes:
+      - migration-history:/app/migrations
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+      - db
+      - jaeger
+      - prometheus
+    # Ensure the API waits for SQL Server to be ready before starting
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # SQL Server database
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: navigation-platform-db
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=NavigationP@ssw0rd!
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P NavigationP@ssw0rd! -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Jaeger for distributed tracing
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: navigation-platform-jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # UI
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:16686"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Prometheus for metrics collection
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: navigation-platform-prometheus
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  sqlserver-data:
+  migration-history:
+  prometheus-data:
+#  rabbitmq-data: 

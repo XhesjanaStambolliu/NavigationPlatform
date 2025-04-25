@@ -1,0 +1,12 @@
+groups:
+- name: navigation-platform-alerts
+  rules:
+  # Alert for high queue lag (> 100 messages for 5 minutes)
+  - alert: HighQueueLag
+    expr: queue_lag > 100
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High queue lag detected"
+      description: "Queue lag is {{ $value }} messages, which is above the threshold of 100 messages for more than 5 minutes." 
