@@ -115,10 +115,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.ShareJourney
             }
 
             await _context.SaveChangesAsync(cancellationToken);
-            
-            // Log the action
-            _logger.LogInformation("User {UserId} shared journey {JourneyId} with {SharedUserCount} users", 
-                currentUserId, request.JourneyId, newShares.Count);
 
             return ApiResponse.CreateSuccess($"Journey shared with {newShares.Count} users");
         }

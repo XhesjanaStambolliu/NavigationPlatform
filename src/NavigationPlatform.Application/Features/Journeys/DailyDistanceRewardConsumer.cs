@@ -97,9 +97,6 @@ namespace NavigationPlatform.Application.Features.Journeys
                     
                     await _dbContext.SaveChangesAsync(cancellationToken);
                     await _eventPublisher.PublishAsync(dailyGoalEvent, cancellationToken);
-                    
-                    _logger.LogInformation("Daily distance goal achieved for user {UserId} with {Distance} km", 
-                        userId, totalDistanceKm);
                 }
             }
             catch (Exception ex)

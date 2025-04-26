@@ -37,11 +37,6 @@ namespace NavigationPlatform.Infrastructure.Auth
             // Get the user ID from CurrentUserService instead of claims
             var userId = _currentUserService.UserId;
             
-            // Log the current user ID and the journey owner ID for debugging
-            _logger.LogInformation(
-                "Authorization check: User ID: {UserId}, Journey Owner ID: {OwnerId}",
-                userId, resource.OwnerId);
-            
             if (userId == Guid.Empty)
             {
                 _logger.LogWarning("User ID is empty or invalid");
@@ -51,7 +46,6 @@ namespace NavigationPlatform.Infrastructure.Auth
             // Check if user is the owner
             if (resource.OwnerId == userId)
             {
-                _logger.LogInformation("User is the owner of the journey - access granted");
                 context.Succeed(requirement);
                 return;
             }
@@ -62,7 +56,6 @@ namespace NavigationPlatform.Infrastructure.Auth
 
             if (isSharedWithUser)
             {
-                _logger.LogInformation("Journey is shared with the user - access granted");
                 context.Succeed(requirement);
                 return;
             }

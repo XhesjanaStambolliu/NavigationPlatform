@@ -20,13 +20,6 @@ namespace NavigationPlatform.Application.Features.Admin.EventHandlers
         
         public async Task Handle(UserStatusChangedEvent notification, CancellationToken cancellationToken)
         {
-            _logger.LogInformation(
-                "User {UserId} status changed from {OldStatus} to {NewStatus} by admin {AdminId}",
-                notification.UserId, 
-                notification.OldStatus, 
-                notification.NewStatus, 
-                notification.ChangedByAdminId);
-            
             // Additional processing logic can be added here
             // This includes:
             // - Sending notifications to the user

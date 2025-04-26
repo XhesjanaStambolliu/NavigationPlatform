@@ -131,8 +131,6 @@ namespace NavigationPlatform.API.Controllers
             }
 
             var currentUserId = _currentUserService.UserId;
-            _logger.LogInformation("UpdateJourney: Journey owner: {OwnerId}, Current user: {UserId}", 
-                journey.OwnerId, currentUserId);
 
             // Direct ownership check for clarity and debugging
             if (journey.OwnerId != currentUserId)
@@ -151,7 +149,6 @@ namespace NavigationPlatform.API.Controllers
                 return Forbid();
             }
 
-            _logger.LogInformation("Updating journey {JourneyId} for user {UserId}", id, currentUserId);
             await _mediator.Send(command);
             return NoContent();
         }

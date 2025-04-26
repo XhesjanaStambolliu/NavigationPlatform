@@ -42,8 +42,6 @@ namespace NavigationPlatform.Application.Auth.Commands
             
             try
             {
-                _logger.LogInformation("Processing logout command. Correlation ID: {CorrelationId}", correlationId);
-                
                 // Get the current refresh token
                 var refreshToken = _tokenService.GetRefreshToken();
                 
@@ -57,10 +55,6 @@ namespace NavigationPlatform.Application.Auth.Commands
                         _logger.LogWarning("Failed to revoke refresh token with Auth0. Correlation ID: {CorrelationId}", correlationId);
                         result.ErrorMessage = "Failed to revoke refresh token with the authentication server. Your session may still be active on some devices.";
                     }
-                    else
-                    {
-                        _logger.LogInformation("Refresh token successfully revoked. Correlation ID: {CorrelationId}", correlationId);
-                    }
                 }
                 else
                 {
@@ -73,7 +67,6 @@ namespace NavigationPlatform.Application.Auth.Commands
                     // Clear the tokens from cookies regardless of revocation success
                     await _tokenService.ClearTokensAsync();
                     result.TokensCleared = true;
-                    _logger.LogInformation("Successfully cleared local token cookies. Correlation ID: {CorrelationId}", correlationId);
                 }
                 catch (Exception ex)
                 {
@@ -92,9 +85,6 @@ namespace NavigationPlatform.Application.Auth.Commands
                 
                 // Success if either we had no token to revoke OR we successfully revoked it AND we cleared cookies
                 result.Success = (string.IsNullOrEmpty(refreshToken) || result.TokenRevoked) && result.TokensCleared;
-                
-                _logger.LogInformation("Logout process completed. Success: {Success}, TokenRevoked: {TokenRevoked}, TokensCleared: {TokensCleared}, Correlation ID: {CorrelationId}", 
-                    result.Success, result.TokenRevoked, result.TokensCleared, correlationId);
                 
                 return result;
             }

@@ -97,7 +97,6 @@ namespace NavigationPlatform.Infrastructure.Services
                 throw new ForbiddenAccessException($"User with email {email} not found");
             }
 
-            _logger.LogInformation("User resolved: {UserName} ({UserId})", _currentUser.UserName, _currentUser.Id);
             _userResolved = true;
         }
     }

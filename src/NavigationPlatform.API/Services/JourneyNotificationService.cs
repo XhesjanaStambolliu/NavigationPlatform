@@ -39,9 +39,6 @@ namespace NavigationPlatform.API.Services
 
         public async Task SendFallbackNotificationAsync(Guid userId, Guid journeyId, string messageType)
         {
-            _logger.LogInformation("Sending fallback email notification to user {UserId} for journey {JourneyId}: {MessageType}", 
-                userId, journeyId, messageType);
-            
             // In a real implementation, this would queue an email notification
             // For now, we'll just log it and create an outbox message
             var message = new OutboxMessage
@@ -74,7 +71,6 @@ namespace NavigationPlatform.API.Services
 
                 if (!userIds.Any())
                 {
-                    _logger.LogInformation("No users have favorited journey {JourneyId}", journeyId);
                     return;
                 }
 
@@ -126,9 +122,6 @@ namespace NavigationPlatform.API.Services
                         offlineUsers.Add(userId);
                     }
                 }
-
-                _logger.LogInformation("Sent {MethodName} notification to {ConnectedCount} users for journey {JourneyId}", 
-                    methodName, connectedUsers.Count, journeyId);
 
                 // For offline users, queue fallback notifications
                 foreach (var userId in offlineUsers)

@@ -35,8 +35,6 @@ namespace NavigationPlatform.Infrastructure.Auth
             
             try
             {
-                _logger.LogDebug("Exchanging code for tokens. Correlation ID: {CorrelationId}", correlationId);
-                
                 var client = _httpClientFactory.CreateClient();
                 var tokenEndpoint = $"https://{_auth0Settings.Domain}/oauth/token";
                 
@@ -57,8 +55,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    
-                    _logger.LogDebug("Token response received. Correlation ID: {CorrelationId}", correlationId);
                     
                     // Use JsonDocument for more flexible parsing
                     using var jsonDoc = JsonDocument.Parse(content);
@@ -90,7 +86,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                     if (root.TryGetProperty("scope", out var scopeElement))
                         tokenResponse.Scope = scopeElement.GetString() ?? string.Empty;
                     
-                    _logger.LogInformation("Code exchange successful. Access token and refresh token obtained. Correlation ID: {CorrelationId}", correlationId);
                     return tokenResponse;
                 }
                 else
@@ -134,8 +129,6 @@ namespace NavigationPlatform.Infrastructure.Auth
             
             try
             {
-                _logger.LogInformation("Token refresh attempted. Correlation ID: {CorrelationId}", correlationId);
-                
                 var client = _httpClientFactory.CreateClient();
                 var tokenEndpoint = $"https://{_auth0Settings.Domain}/oauth/token";
                 
@@ -191,7 +184,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                     if (root.TryGetProperty("scope", out var scopeElement))
                         tokenResponse.Scope = scopeElement.GetString() ?? string.Empty;
                         
-                    _logger.LogInformation("Token refresh successful. Correlation ID: {CorrelationId}", correlationId);
                     return tokenResponse;
                 }
                 else
@@ -241,8 +233,6 @@ namespace NavigationPlatform.Infrastructure.Auth
             
             try
             {
-                _logger.LogInformation("Revoking refresh token. Correlation ID: {CorrelationId}", correlationId);
-                
                 if (string.IsNullOrEmpty(refreshToken))
                 {
                     _logger.LogWarning("No refresh token provided for revocation. Correlation ID: {CorrelationId}", correlationId);
@@ -265,7 +255,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                 
                 if (response.IsSuccessStatusCode)
                 {
-                    _logger.LogInformation("Refresh token successfully revoked. Correlation ID: {CorrelationId}", correlationId);
                     return true;
                 }
                 else
