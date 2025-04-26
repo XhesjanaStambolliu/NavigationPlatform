@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NavigationPlatform.Application.Common.Interfaces;
 using NavigationPlatform.Application.Common.Models;
 using NavigationPlatform.Application.Features.Journeys.Commands.CreateJourney;

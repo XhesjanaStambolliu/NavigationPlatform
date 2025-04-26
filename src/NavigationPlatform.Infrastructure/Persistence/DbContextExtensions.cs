@@ -38,16 +38,13 @@ namespace NavigationPlatform.Infrastructure.Persistence
                 
                 if (pendingMigrations.Any())
                 {
-                    logger.LogInformation("Applying {Count} database migrations", pendingMigrations.Count);
                     context.Database.Migrate();
-                    logger.LogInformation("Database migrations applied successfully");
                 }
                 else
                 {
                     // Check if database exists, if not create it
                     if (!context.Database.CanConnect())
                     {
-                        logger.LogInformation("Creating database...");
                         context.Database.EnsureCreated();
                     }
                 }

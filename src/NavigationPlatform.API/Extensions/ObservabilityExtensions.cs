@@ -33,13 +33,6 @@ public static class ObservabilityExtensions
     
     public static WebApplication UseObservability(this WebApplication app)
     {
-        // Configure Serilog request logging
-        app.UseSerilogRequestLogging(options => 
-        {
-            options.MessageTemplate = 
-                "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
-        });
-        
         // Configure Health Checks endpoints
         app.MapHealthChecks("/healthz", new HealthCheckOptions
         {
@@ -128,12 +121,6 @@ public static class ObservabilityExtensions
                         options.SetDbStatementForText = true;
                     })
                     .AddSource("NavigationPlatform.API");
-                
-                // Add console exporter for development
-                if (builder.Environment.IsDevelopment())
-                {
-                    tracing.AddConsoleExporter();
-                }
                 
                 // Add Jaeger exporter if enabled
                 if (jaegerEnabled)

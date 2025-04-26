@@ -39,7 +39,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
 
             try
             {
-                logger.LogInformation("Initializing database...");
                 var context = services.GetRequiredService<AppDbContext>();
 
                 // Apply migrations
@@ -60,7 +59,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
         {
             try
             {
-                logger.LogInformation("Applying database migrations...");
                 await context.Database.MigrateAsync();
             }
             catch (SqlException ex) when (ex.Number == 2714)

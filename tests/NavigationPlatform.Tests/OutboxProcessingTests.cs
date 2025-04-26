@@ -40,8 +40,6 @@ namespace NavigationPlatform.Tests
             
             // Act - Serialize with System.Text.Json (what's used in production)
             var serialized = System.Text.Json.JsonSerializer.Serialize(journeyCreatedEvent, jsonOptions);
-            Console.WriteLine("Serialized event:");
-            Console.WriteLine(serialized);
             
             // Verify the serialized JSON contains $id and $ref tokens for circular references
             Assert.Contains("$id", serialized);
@@ -76,8 +74,6 @@ namespace NavigationPlatform.Tests
                 var ownerJourney = deserialized.Journey.Owner.Journeys.First();
                 Assert.Equal(deserialized.Journey.Id, ownerJourney.Id);
             }
-
-            Console.WriteLine("Test passed - circular references handled correctly!");
         }
         
         /// <summary>
