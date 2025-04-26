@@ -139,7 +139,7 @@ The application uses Entity Framework Core 7+ for data persistence:
 
 1. Clone the repository:
 ```
-git clone [https://github.com/yourusername/NavigationPlatform.git](https://github.com/XhesjanaStambolliu/NavigationPlatform)
+git clone https://github.com/XhesjanaStambolliu/NavigationPlatform
 cd NavigationPlatform
 ```
 
