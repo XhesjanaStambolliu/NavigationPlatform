@@ -12,8 +12,8 @@ using NavigationPlatform.Infrastructure.Persistence;
 namespace NavigationPlatform.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250424170752_InitialSchema")]
-    partial class InitialSchema
+    [Migration("20250427201255_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -121,9 +121,6 @@ namespace NavigationPlatform.Infrastructure.Migrations
 
                     b.Property<DateTime>("ArrivalTime")
                         .HasColumnType("datetime2");
-
-                    b.Property<double?>("AverageSpeedKmh")
-                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -251,9 +248,6 @@ namespace NavigationPlatform.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<double?>("AverageSpeedKmh")
-                        .HasColumnType("float");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");

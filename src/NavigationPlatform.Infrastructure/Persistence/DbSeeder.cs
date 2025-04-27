@@ -145,7 +145,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = today.AddHours(9),
                     TransportType = TransportType.Car,
                     DistanceKm = 12.5m,
-                    AverageSpeedKmh = 35.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/1",
                     IsDeleted = false,
@@ -166,7 +165,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = today.AddHours(18),
                     TransportType = TransportType.Car,
                     DistanceKm = 12.5m, // Total for the day: 25km
-                    AverageSpeedKmh = 32.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/2",
                     IsDeleted = false,
@@ -187,7 +185,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = yesterday.AddHours(3),
                     TransportType = TransportType.Car,
                     DistanceKm = 78.2m, 
-                    AverageSpeedKmh = 65.0,
                     IsPublic = false,
                     RouteDataUrl = "https://example.com/routes/3",
                     IsDeleted = false,
@@ -208,7 +205,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = lastWeek.AddHours(5),
                     TransportType = TransportType.Airplane,
                     DistanceKm = 500.0m,
-                    AverageSpeedKmh = 800.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/4",
                     IsDeleted = false,
@@ -229,7 +225,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = yesterday.AddHours(8),
                     TransportType = TransportType.Walk,
                     DistanceKm = 5.0m,
-                    AverageSpeedKmh = 5.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/5",
                     IsDeleted = false,
@@ -351,7 +346,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = currentMonth,
                     TotalDistanceKm = 525.0, // Includes all journeys this month
                     JourneyCount = 3,
-                    AverageSpeedKmh = 289.0, // Average across different transport types
                     CreatedAt = now
                 },
                 
@@ -364,7 +358,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = lastMonth,
                     TotalDistanceKm = 325.5,
                     JourneyCount = 5,
-                    AverageSpeedKmh = 45.0,
                     CreatedAt = now
                 },
                 
@@ -377,7 +370,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = currentMonth,
                     TotalDistanceKm = 78.2, // Just the mountain trip
                     JourneyCount = 1,
-                    AverageSpeedKmh = 65.0,
                     CreatedAt = now
                 },
                 
@@ -390,7 +382,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = currentMonth,
                     TotalDistanceKm = 19.8, // Just below the badge threshold
                     JourneyCount = 4,
-                    AverageSpeedKmh = 5.0,
                     CreatedAt = now
                 }
             };

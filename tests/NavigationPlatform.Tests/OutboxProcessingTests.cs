@@ -108,7 +108,6 @@ namespace NavigationPlatform.Tests
                 ArrivalTime = DateTime.UtcNow,
                 TransportType = TransportType.Car,
                 DistanceKm = 15.0m,
-                AverageSpeedKmh = 45.0,
                 IsPublic = true,
                 RouteDataUrl = "https://example.com/routes/test",
                 IsDeleted = false,
