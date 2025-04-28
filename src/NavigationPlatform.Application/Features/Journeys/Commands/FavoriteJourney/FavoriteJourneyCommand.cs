@@ -76,23 +76,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.FavoriteJour
             };
 
             _dbContext.JourneyFavorites.Add(favorite);
-
-            // Create audit entry
-            var auditLog = new OutboxMessage
-            {
-                Id = Guid.NewGuid(),
-                Type = "JourneyFavorited",
-                Content = System.Text.Json.JsonSerializer.Serialize(new
-                {
-                    UserId = _currentUserService.UserId,
-                    JourneyId = request.JourneyId,
-                    Timestamp = DateTime.UtcNow
-                }),
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _dbContext.OutboxMessages.Add(auditLog);
-
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return ApiResponse.CreateSuccess("Journey added to favorites.");

@@ -174,15 +174,15 @@ namespace NavigationPlatform.API.Controllers
         /// <returns>Success response</returns>
         [HttpPost("{id}/share")]
         [Authorize]
-        public async Task<ActionResult> ShareJourney(Guid id, ShareJourneyCommand command)
+        public async Task<ActionResult<ApiResponse>> ShareJourney(Guid id, ShareJourneyCommand command)
         {
             if (id != command.JourneyId)
             {
                 return BadRequest(ApiResponse.CreateFailure("ID in the URL does not match the ID in the request body"));
             }
 
-            await _mediator.Send(command);
-            return NoContent();
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         /// <summary>

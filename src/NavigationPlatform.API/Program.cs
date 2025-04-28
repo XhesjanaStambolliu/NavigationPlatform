@@ -31,7 +31,7 @@ builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 // Register OutboxProcessor background service
-builder.Services.AddOutboxProcessor(builder.Configuration);
+//builder.Services.AddOutboxProcessor(builder.Configuration);
 
 // Load Auth0 settings from configuration
 var auth0Section = builder.Configuration.GetSection("Auth0");

@@ -10,7 +10,7 @@ namespace NavigationPlatform.Domain.Enums
         Motorcycle = 5,
         Airplane = 6,
         Ship = 7,
-        Other = 99,
-        Walking = 100
+        Other = 8,
+        Walking = 9
     }
 } 
