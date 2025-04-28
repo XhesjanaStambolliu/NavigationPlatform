@@ -74,10 +74,10 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.ShareJourney
                 var userIds = request.UserIds.Distinct().ToList();
                 var existingUsers = await _context.Users
                     .Where(u => userIds.Contains(u.Id) && u.Status == UserStatus.Active)
-                    .Select(u => u.Id)
+                    .Select(u => new { u.Id, u.Email })
                     .ToListAsync(cancellationToken);
 
-                var validUserIds = userIds.Intersect(existingUsers).ToList();
+                var validUserIds = userIds.Intersect(existingUsers.Select(u => u.Id)).ToList();
 
                 // Check for existing shares to prevent duplicates
                 var existingShares = await _context.JourneyShares
@@ -92,9 +92,10 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.ShareJourney
                     return ApiResponse.CreateFailure("No new users could be shared with.");
                 }
 
-                // Create new shares
+                // Create new shares and audit records
                 foreach (var userId in newShares)
                 {
+                    var userEmail = existingUsers.First(u => u.Id == userId).Email;
                     var journeyShare = new JourneyShare
                     {
                         JourneyId = request.JourneyId,
@@ -104,6 +105,20 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.ShareJourney
                     };
 
                     _context.JourneyShares.Add(journeyShare);
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    // Create audit record after the share is saved
+                    var audit = new ShareAudit
+                    {
+                        JourneyShareId = journeyShare.Id,
+                        Action = "Created",
+                        Details = $"Journey shared with user {userEmail}",
+                        IpAddress = _currentUserService.IpAddress,
+                        UserAgent = _currentUserService.UserAgent,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.ShareAudits.Add(audit);
                 }
 
                 await _context.SaveChangesAsync(cancellationToken);
