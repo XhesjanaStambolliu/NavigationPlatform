@@ -1,6 +1,7 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NavigationPlatform.Application.Common.Exceptions;
 using NavigationPlatform.Application.Common.Models;
 using NavigationPlatform.Application.Features.Journeys.Queries.GetPublicJourney;
 using NavigationPlatform.Application.Features.Journeys.Queries.Models;
@@ -27,9 +28,16 @@ namespace NavigationPlatform.API.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<ApiResponse<JourneyDto>>> GetJourneyByToken(string token)
         {
-            var query = new GetPublicJourneyQuery { Token = token };
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            try
+            {
+                var query = new GetPublicJourneyQuery { Token = token };
+                var result = await _mediator.Send(query);
+                return Ok(result);
+            }
+            catch (GoneException ex)
+            {
+                return StatusCode(410, ApiResponse.CreateFailure(ex.Message));
+            }
         }
     }
 } 
