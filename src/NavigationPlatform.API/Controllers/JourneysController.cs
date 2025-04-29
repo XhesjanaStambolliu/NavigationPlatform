@@ -84,7 +84,8 @@ namespace NavigationPlatform.API.Controllers
             var authResult = await _authorizationService.AuthorizeAsync(User, journey, AuthorizationPolicies.JourneyOwnerOrSharedPolicy);
             if (!authResult.Succeeded)
             {
-                return Forbid();
+                return StatusCode((int)System.Net.HttpStatusCode.Forbidden, 
+                    ApiResponse.CreateFailure("You do not have permission to view this journey"));
             }
 
             var query = new GetJourneyQuery { Id = id };
@@ -136,7 +137,8 @@ namespace NavigationPlatform.API.Controllers
             {
                 _logger.LogWarning("User {UserId} attempted to update journey {JourneyId} owned by {OwnerId}",
                     currentUserId, id, journey.OwnerId);
-                return Forbid();
+                return StatusCode((int)System.Net.HttpStatusCode.Forbidden, 
+                    ApiResponse.CreateFailure("You do not have permission to update this journey. Only the owner can update a journey."));
             }
 
             // Still use the authorization service for audit and consistency
@@ -145,7 +147,8 @@ namespace NavigationPlatform.API.Controllers
             {
                 _logger.LogWarning("Authorization failed for user {UserId} to update journey {JourneyId}",
                     currentUserId, id);
-                return Forbid();
+                return StatusCode((int)System.Net.HttpStatusCode.Forbidden, 
+                    ApiResponse.CreateFailure("You do not have permission to update this journey."));
             }
 
             await _mediator.Send(command);
