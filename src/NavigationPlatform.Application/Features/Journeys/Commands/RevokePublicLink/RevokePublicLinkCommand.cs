@@ -78,9 +78,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.RevokePublic
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("User {UserId} revoked {Count} public links for journey {JourneyId}", 
-                currentUserId, publicLinks.Count, request.JourneyId);
-
             return ApiResponse.CreateSuccess($"Successfully revoked {publicLinks.Count} public links");
         }
     }

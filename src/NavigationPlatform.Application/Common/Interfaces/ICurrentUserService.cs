@@ -7,5 +7,7 @@ namespace NavigationPlatform.Application.Common.Interfaces
         Guid UserId { get; }
         string UserName { get; }
         bool IsAuthenticated { get; }
+        string IpAddress { get; }
+        string UserAgent { get; }
     }
 } 

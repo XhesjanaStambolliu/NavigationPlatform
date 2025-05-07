@@ -61,22 +61,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.UnfavoriteJo
             // Remove the favorite
             _dbContext.JourneyFavorites.Remove(favorite);
 
-            // Create audit entry
-            var auditLog = new OutboxMessage
-            {
-                Id = Guid.NewGuid(),
-                Type = "JourneyUnfavorited",
-                Content = System.Text.Json.JsonSerializer.Serialize(new
-                {
-                    UserId = _currentUserService.UserId,
-                    JourneyId = request.JourneyId,
-                    Timestamp = DateTime.UtcNow
-                }),
-                CreatedAt = DateTime.UtcNow
-            };
-
-            _dbContext.OutboxMessages.Add(auditLog);
-
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return ApiResponse.CreateSuccess("Journey removed from favorites.");

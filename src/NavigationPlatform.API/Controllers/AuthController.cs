@@ -38,8 +38,6 @@ namespace NavigationPlatform.API.Controllers
             
             try
             {
-                _logger.LogInformation("Token refresh requested via API endpoint. Correlation ID: {CorrelationId}", correlationId);
-                
                 if (string.IsNullOrEmpty(request.RefreshToken))
                 {
                     _logger.LogWarning("No refresh token provided. Correlation ID: {CorrelationId}", correlationId);
@@ -51,7 +49,6 @@ namespace NavigationPlatform.API.Controllers
                 
                 if (result.IsSuccess)
                 {
-                    _logger.LogInformation("Token refresh successful via API endpoint. Correlation ID: {CorrelationId}", correlationId);
                     return Ok(result);
                 }
                 else
@@ -76,14 +73,11 @@ namespace NavigationPlatform.API.Controllers
             
             try
             {
-                _logger.LogInformation("Logout requested via API endpoint. Correlation ID: {CorrelationId}", correlationId);
-                
                 var command = new LogoutCommand();
                 var result = await _mediator.Send(command);
                 
                 if (result.Success)
                 {
-                    _logger.LogInformation("Logout successful via API endpoint. Correlation ID: {CorrelationId}", correlationId);
                     return Ok(new { message = "Successfully logged out" });
                 }
                 else

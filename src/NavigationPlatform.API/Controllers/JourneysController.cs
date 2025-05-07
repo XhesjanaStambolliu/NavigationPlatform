@@ -1,7 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using NavigationPlatform.Application.Common.Interfaces;
 using NavigationPlatform.Application.Common.Models;
 using NavigationPlatform.Application.Features.Journeys.Commands.CreateJourney;
@@ -131,8 +130,6 @@ namespace NavigationPlatform.API.Controllers
             }
 
             var currentUserId = _currentUserService.UserId;
-            _logger.LogInformation("UpdateJourney: Journey owner: {OwnerId}, Current user: {UserId}", 
-                journey.OwnerId, currentUserId);
 
             // Direct ownership check for clarity and debugging
             if (journey.OwnerId != currentUserId)
@@ -151,7 +148,6 @@ namespace NavigationPlatform.API.Controllers
                 return Forbid();
             }
 
-            _logger.LogInformation("Updating journey {JourneyId} for user {UserId}", id, currentUserId);
             await _mediator.Send(command);
             return NoContent();
         }
@@ -178,15 +174,15 @@ namespace NavigationPlatform.API.Controllers
         /// <returns>Success response</returns>
         [HttpPost("{id}/share")]
         [Authorize]
-        public async Task<ActionResult> ShareJourney(Guid id, ShareJourneyCommand command)
+        public async Task<ActionResult<ApiResponse>> ShareJourney(Guid id, ShareJourneyCommand command)
         {
             if (id != command.JourneyId)
             {
                 return BadRequest(ApiResponse.CreateFailure("ID in the URL does not match the ID in the request body"));
             }
 
-            await _mediator.Send(command);
-            return NoContent();
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         /// <summary>
@@ -213,8 +209,8 @@ namespace NavigationPlatform.API.Controllers
         public async Task<ActionResult> RevokePublicLink(Guid id)
         {
             var command = new RevokePublicLinkCommand { JourneyId = id };
-            await _mediator.Send(command);
-            return NoContent();
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
 
         /// <summary>

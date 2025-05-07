@@ -44,7 +44,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                 var accessToken = GetAccessTokenFromCookie();
                 if (string.IsNullOrEmpty(accessToken))
                 {
-                    _logger.LogInformation("Access token is missing. Correlation ID: {CorrelationId}", correlationId);
                     return false;
                 }
                 
@@ -56,16 +55,13 @@ namespace NavigationPlatform.Infrastructure.Auth
                     
                     if (validatedToken.ValidTo > DateTime.UtcNow)
                     {
-                        _logger.LogDebug("Access token is valid. Correlation ID: {CorrelationId}", correlationId);
                         return true;
                     }
                     
-                    _logger.LogDebug("Access token has expired. Correlation ID: {CorrelationId}", correlationId);
                     return false;
                 }
                 catch (SecurityTokenExpiredException)
                 {
-                    _logger.LogDebug("Access token has expired. Correlation ID: {CorrelationId}", correlationId);
                     return false;
                 }
                 catch (Exception ex)
@@ -90,17 +86,13 @@ namespace NavigationPlatform.Infrastructure.Auth
                 var refreshToken = GetRefreshTokenFromCookie();
                 if (string.IsNullOrEmpty(refreshToken))
                 {
-                    _logger.LogInformation("Refresh token is missing. Correlation ID: {CorrelationId}", correlationId);
                     return false;
                 }
-                
-                _logger.LogInformation("Attempting to refresh access token. Correlation ID: {CorrelationId}", correlationId);
                 
                 var tokenResult = await _auth0Service.RefreshAccessTokenAsync(refreshToken);
                 
                 if (!tokenResult.IsSuccess || string.IsNullOrEmpty(tokenResult.AccessToken))
                 {
-                    _logger.LogInformation("Token refresh failed. Correlation ID: {CorrelationId}", correlationId);
                     return false;
                 }
                 
@@ -113,7 +105,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                     tokenResult.ExpiresAt,
                     refreshTokenExpiresAt);
                 
-                _logger.LogInformation("Token refresh successful. Correlation ID: {CorrelationId}", correlationId);
                 return true;
             }
             catch (Exception ex)
@@ -169,7 +160,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                 var accessToken = GetAccessTokenFromCookie();
                 if (string.IsNullOrEmpty(accessToken))
                 {
-                    _logger.LogDebug("No access token found for user principal. Correlation ID: {CorrelationId}", correlationId);
                     return null;
                 }
                 
@@ -191,8 +181,6 @@ namespace NavigationPlatform.Infrastructure.Auth
             
             try
             {
-                _logger.LogInformation("Clearing token cookies. Correlation ID: {CorrelationId}", correlationId);
-                
                 var httpContext = _httpContextAccessor.HttpContext;
                 
                 if (httpContext != null)
@@ -212,8 +200,6 @@ namespace NavigationPlatform.Infrastructure.Auth
                         Secure = true,
                         SameSite = SameSiteMode.Strict
                     });
-                    
-                    _logger.LogInformation("Token cookies successfully cleared. Correlation ID: {CorrelationId}", correlationId);
                 }
                 else
                 {

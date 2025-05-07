@@ -14,8 +14,6 @@ namespace NavigationPlatform.Domain.Entities
         
         public int JourneyCount { get; set; }
         
-        public double? AverageSpeedKmh { get; set; }
-        
         // Navigation property
         public virtual ApplicationUser User { get; set; }
     }

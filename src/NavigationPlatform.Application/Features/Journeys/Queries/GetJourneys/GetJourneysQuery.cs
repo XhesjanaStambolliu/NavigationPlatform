@@ -92,7 +92,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Queries.GetJourneys
                 ArrivalTime = j.ArrivalTime,
                 TransportType = j.TransportType,
                 DistanceKm = j.DistanceKm,
-                AverageSpeedKmh = j.AverageSpeedKmh,
                 IsPublic = j.IsPublic,
                 RouteDataUrl = j.RouteDataUrl,
                 CreatedAt = j.CreatedAt,

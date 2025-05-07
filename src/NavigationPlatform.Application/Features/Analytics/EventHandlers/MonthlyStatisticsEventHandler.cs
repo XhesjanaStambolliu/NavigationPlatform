@@ -123,27 +123,10 @@ namespace NavigationPlatform.Application.Features.Analytics.EventHandlers
 
                 var totalDistance = journeysInMonth.Sum(j => (double)j.DistanceKm);
                 var journeyCount = journeysInMonth.Count;
-                
-                // Calculate average speed if we have journeys
-                double? averageSpeed = null;
-                if (journeyCount > 0)
-                {
-                    var totalSpeed = journeysInMonth
-                        .Where(j => j.AverageSpeedKmh.HasValue)
-                        .Sum(j => j.AverageSpeedKmh.Value);
-                    
-                    var journeysWithSpeed = journeysInMonth.Count(j => j.AverageSpeedKmh.HasValue);
-                    
-                    if (journeysWithSpeed > 0)
-                    {
-                        averageSpeed = totalSpeed / journeysWithSpeed;
-                    }
-                }
 
                 // Update the statistics
                 monthlyStats.TotalDistanceKm = totalDistance;
                 monthlyStats.JourneyCount = journeyCount;
-                monthlyStats.AverageSpeedKmh = averageSpeed;
                 monthlyStats.UpdatedAt = DateTime.UtcNow;
 
                 await _dbContext.SaveChangesAsync(cancellationToken);

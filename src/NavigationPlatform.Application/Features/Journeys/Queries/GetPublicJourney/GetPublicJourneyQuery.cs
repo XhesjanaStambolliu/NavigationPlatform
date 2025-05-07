@@ -77,9 +77,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Queries.GetPublicJour
             // Map journey to DTO
             var journeyDto = _mapper.Map<JourneyDto>(publicLink.Journey);
 
-            _logger.LogInformation("Public journey {JourneyId} accessed via token {Token}", 
-                publicLink.JourneyId, request.Token);
-
             return ApiResponse<JourneyDto>.CreateSuccess(
                 journeyDto,
                 "Journey retrieved successfully"

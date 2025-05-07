@@ -63,7 +63,6 @@ namespace NavigationPlatform.Infrastructure.Migrations
                     ArrivalTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     TransportType = table.Column<int>(type: "int", nullable: false),
                     DistanceKm = table.Column<decimal>(type: "decimal(5,2)", nullable: false),
-                    AverageSpeedKmh = table.Column<double>(type: "float", nullable: true),
                     IsPublic = table.Column<bool>(type: "bit", nullable: false),
                     RouteDataUrl = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -92,7 +91,6 @@ namespace NavigationPlatform.Infrastructure.Migrations
                     Month = table.Column<int>(type: "int", nullable: false),
                     TotalDistanceKm = table.Column<double>(type: "float", nullable: false),
                     JourneyCount = table.Column<int>(type: "int", nullable: false),
-                    AverageSpeedKmh = table.Column<double>(type: "float", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },

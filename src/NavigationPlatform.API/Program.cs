@@ -1,15 +1,3 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using NavigationPlatform.API;
 using NavigationPlatform.API.Extensions;
 using NavigationPlatform.API.Hubs;
@@ -21,6 +9,7 @@ using NavigationPlatform.Infrastructure;
 using NavigationPlatform.Infrastructure.Auth;
 using NavigationPlatform.Infrastructure.OpenApi;
 using NavigationPlatform.Infrastructure.Persistence;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,7 +49,7 @@ builder.Services.AddAuth0CookieAuthentication(builder.Configuration);
 builder.Services.AddAuthorizationPolicies();
 
 // Add the DbContext to the container - use fully qualified method to resolve ambiguity
-NavigationPlatform.Infrastructure.Persistence.DbExtensions.AddAppDbContext(builder.Services, builder.Configuration);
+DbExtensions.AddAppDbContext(builder.Services, builder.Configuration);
 
 // Add SignalR
 builder.Services.AddSignalR();

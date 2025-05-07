@@ -17,7 +17,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Queries.Models
         public TransportType TransportType { get; set; }
         public string TransportTypeName => TransportType.ToString();
         public decimal DistanceKm { get; set; }
-        public double? AverageSpeedKmh { get; set; }
         public bool IsPublic { get; set; }
         public string RouteDataUrl { get; set; }
         public DateTime CreatedAt { get; set; }

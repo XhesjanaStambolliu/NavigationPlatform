@@ -52,75 +52,84 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.ShareJourney
 
         public async Task<ApiResponse> Handle(ShareJourneyCommand request, CancellationToken cancellationToken)
         {
-            var currentUserId = _currentUserService.UserId;
-
-            // Validate journey exists and current user is the owner
-            var journey = await _context.Journeys
-                .FirstOrDefaultAsync(j => j.Id == request.JourneyId && !j.IsDeleted, cancellationToken);
-
-            if (journey == null)
+            try
             {
-                throw new NotFoundException("Journey not found");
-            }
+                var currentUserId = _currentUserService.UserId;
 
-            if (journey.OwnerId != currentUserId)
-            {
-                throw new ForbiddenAccessException("Only the journey owner can share it");
-            }
+                // Validate journey exists and current user is the owner
+                var journey = await _context.Journeys
+                    .FirstOrDefaultAsync(j => j.Id == request.JourneyId && !j.IsDeleted, cancellationToken);
 
-            // Validate all users exist
-            var userIds = request.UserIds.Distinct().ToList();
-            var existingUsers = await _context.Users
-                .Where(u => userIds.Contains(u.Id) && u.Status == UserStatus.Active)
-                .Select(u => u.Id)
-                .ToListAsync(cancellationToken);
-
-            var invalidUserIds = userIds.Except(existingUsers).ToList();
-            if (invalidUserIds.Any())
-            {
-                return ApiResponse.CreateFailure($"The following user IDs are invalid or inactive: {string.Join(", ", invalidUserIds)}");
-            }
-
-            // Check for existing shares to prevent duplicates
-            var existingShares = await _context.JourneyShares
-                .Where(js => js.JourneyId == request.JourneyId && userIds.Contains(js.UserId))
-                .Select(js => js.UserId)
-                .ToListAsync(cancellationToken);
-
-            var newShares = userIds.Except(existingShares).ToList();
-            
-            // Create new shares
-            foreach (var userId in newShares)
-            {
-                var journeyShare = new JourneyShare
+                if (journey == null)
                 {
-                    JourneyId = request.JourneyId,
-                    UserId = userId,
-                    ShareType = ShareType.Direct,
-                    ShareNote = request.ShareNote
-                };
+                    return ApiResponse.CreateFailure("Journey not found.");
+                }
 
-                _context.JourneyShares.Add(journeyShare);
-                
-                // Add audit for the share action
-                var shareAudit = new ShareAudit
+                if (journey.OwnerId != currentUserId)
                 {
-                    JourneyShareId = journeyShare.Id,
-                    Action = "Share",
-                    Details = $"Shared by user {currentUserId} with user {userId}",
-                    IpAddress = "N/A" // This would typically come from the request context
-                };
+                    return ApiResponse.CreateFailure("You don't have permission to share this journey.");
+                }
+
+                // Validate all users exist
+                var userIds = request.UserIds.Distinct().ToList();
+                var existingUsers = await _context.Users
+                    .Where(u => userIds.Contains(u.Id) && u.Status == UserStatus.Active)
+                    .Select(u => new { u.Id, u.Email })
+                    .ToListAsync(cancellationToken);
+
+                var validUserIds = userIds.Intersect(existingUsers.Select(u => u.Id)).ToList();
+
+                // Check for existing shares to prevent duplicates
+                var existingShares = await _context.JourneyShares
+                    .Where(js => js.JourneyId == request.JourneyId && validUserIds.Contains(js.UserId))
+                    .Select(js => js.UserId)
+                    .ToListAsync(cancellationToken);
+
+                var newShares = validUserIds.Except(existingShares).ToList();
                 
-                _context.ShareAudits.Add(shareAudit);
+                if (newShares.Count == 0)
+                {
+                    return ApiResponse.CreateFailure("No new users could be shared with.");
+                }
+
+                // Create new shares and audit records
+                foreach (var userId in newShares)
+                {
+                    var userEmail = existingUsers.First(u => u.Id == userId).Email;
+                    var journeyShare = new JourneyShare
+                    {
+                        JourneyId = request.JourneyId,
+                        UserId = userId,
+                        ShareType = ShareType.Direct,
+                        ShareNote = request.ShareNote
+                    };
+
+                    _context.JourneyShares.Add(journeyShare);
+                    await _context.SaveChangesAsync(cancellationToken);
+
+                    // Create audit record after the share is saved
+                    var audit = new ShareAudit
+                    {
+                        JourneyShareId = journeyShare.Id,
+                        Action = "Created",
+                        Details = $"Journey shared with user {userEmail}",
+                        IpAddress = _currentUserService.IpAddress,
+                        UserAgent = _currentUserService.UserAgent,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.ShareAudits.Add(audit);
+                }
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                return ApiResponse.CreateSuccess("Journey shared successfully.");
             }
-
-            await _context.SaveChangesAsync(cancellationToken);
-            
-            // Log the action
-            _logger.LogInformation("User {UserId} shared journey {JourneyId} with {SharedUserCount} users", 
-                currentUserId, request.JourneyId, newShares.Count);
-
-            return ApiResponse.CreateSuccess($"Journey shared with {newShares.Count} users");
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sharing journey {JourneyId}", request.JourneyId);
+                return ApiResponse.CreateFailure("Journey share operation failed.");
+            }
         }
     }
 } 

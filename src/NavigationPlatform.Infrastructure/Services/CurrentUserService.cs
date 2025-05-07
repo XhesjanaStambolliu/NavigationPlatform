@@ -57,6 +57,34 @@ namespace NavigationPlatform.Infrastructure.Services
             }
         }
 
+        public string IpAddress
+        {
+            get
+            {
+                var httpContext = _httpContextAccessor.HttpContext;
+                if (httpContext == null) return string.Empty;
+
+                // Try to get the IP from X-Forwarded-For header first
+                var forwardedFor = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(forwardedFor))
+                {
+                    return forwardedFor.Split(',')[0].Trim();
+                }
+
+                // Fall back to remote IP address
+                return httpContext.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
+            }
+        }
+
+        public string UserAgent
+        {
+            get
+            {
+                var httpContext = _httpContextAccessor.HttpContext;
+                return httpContext?.Request.Headers["User-Agent"].FirstOrDefault() ?? string.Empty;
+            }
+        }
+
         private void EnsureUserResolved()
         {
             if (_userResolved)
@@ -97,7 +125,6 @@ namespace NavigationPlatform.Infrastructure.Services
                 throw new ForbiddenAccessException($"User with email {email} not found");
             }
 
-            _logger.LogInformation("User resolved: {UserName} ({UserId})", _currentUser.UserName, _currentUser.Id);
             _userResolved = true;
         }
     }

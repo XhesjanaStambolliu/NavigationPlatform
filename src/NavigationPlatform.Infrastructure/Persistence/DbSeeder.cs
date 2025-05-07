@@ -60,11 +60,8 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if main user already exists
             if (await dbContext.Users.AnyAsync(u => u.Id == MainUserId))
             {
-                logger.LogInformation("Main user already exists");
                 return;
             }
-            
-            logger.LogInformation("Creating users");
             
             var users = new List<ApplicationUser>
             {
@@ -118,7 +115,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.Users.AddRange(users);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Users created successfully");
         }
 
         private static async Task SeedJourneysAsync(AppDbContext dbContext, ILogger logger)
@@ -126,11 +122,8 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if journeys already exist
             if (await dbContext.Journeys.AnyAsync(j => j.Id == Journey1Id))
             {
-                logger.LogInformation("Sample journeys already exist");
                 return;
             }
-            
-            logger.LogInformation("Creating sample journeys");
             
             // Reference dates for consistent testing
             var today = DateTime.UtcNow.Date;
@@ -152,7 +145,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = today.AddHours(9),
                     TransportType = TransportType.Car,
                     DistanceKm = 12.5m,
-                    AverageSpeedKmh = 35.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/1",
                     IsDeleted = false,
@@ -173,7 +165,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = today.AddHours(18),
                     TransportType = TransportType.Car,
                     DistanceKm = 12.5m, // Total for the day: 25km
-                    AverageSpeedKmh = 32.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/2",
                     IsDeleted = false,
@@ -194,7 +185,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = yesterday.AddHours(3),
                     TransportType = TransportType.Car,
                     DistanceKm = 78.2m, 
-                    AverageSpeedKmh = 65.0,
                     IsPublic = false,
                     RouteDataUrl = "https://example.com/routes/3",
                     IsDeleted = false,
@@ -215,7 +205,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = lastWeek.AddHours(5),
                     TransportType = TransportType.Airplane,
                     DistanceKm = 500.0m,
-                    AverageSpeedKmh = 800.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/4",
                     IsDeleted = false,
@@ -236,7 +225,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     ArrivalTime = yesterday.AddHours(8),
                     TransportType = TransportType.Walk,
                     DistanceKm = 5.0m,
-                    AverageSpeedKmh = 5.0,
                     IsPublic = true,
                     RouteDataUrl = "https://example.com/routes/5",
                     IsDeleted = false,
@@ -247,7 +235,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.Journeys.AddRange(sampleJourneys);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample journeys created successfully");
         }
 
         private static async Task SeedJourneySharesAsync(AppDbContext dbContext, ILogger logger)
@@ -255,11 +242,8 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if shares already exist
             if (await dbContext.JourneyShares.AnyAsync())
             {
-                logger.LogInformation("Sample journey shares already exist");
                 return;
             }
-            
-            logger.LogInformation("Creating sample journey shares");
             
             var shares = new List<JourneyShare>
             {
@@ -290,7 +274,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.JourneyShares.AddRange(shares);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample journey shares created successfully");
         }
         
         private static async Task SeedShareAuditsAsync(AppDbContext dbContext, ILogger logger)
@@ -298,7 +281,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if audit records already exist
             if (await dbContext.ShareAudits.AnyAsync())
             {
-                logger.LogInformation("Sample share audits already exist");
                 return;
             }
             
@@ -306,11 +288,8 @@ namespace NavigationPlatform.Infrastructure.Persistence
             var share = await dbContext.JourneyShares.FirstOrDefaultAsync();
             if (share == null)
             {
-                logger.LogWarning("No journey shares found for audit seeding");
                 return;
             }
-            
-            logger.LogInformation("Creating sample share audits");
             
             var audits = new List<ShareAudit>
             {
@@ -339,7 +318,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.ShareAudits.AddRange(audits);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample share audits created successfully");
         }
         
         private static async Task SeedMonthlyUserDistancesAsync(AppDbContext dbContext, ILogger logger)
@@ -347,7 +325,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if monthly distance records already exist
             if (await dbContext.MonthlyUserDistances.AnyAsync())
             {
-                logger.LogInformation("Sample monthly distances already exist");
                 return;
             }
             
@@ -357,8 +334,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             var currentYear = now.Year;
             var lastMonth = currentMonth == 1 ? 12 : currentMonth - 1;
             var lastMonthYear = currentMonth == 1 ? currentYear - 1 : currentYear;
-            
-            logger.LogInformation("Creating sample monthly user distances");
             
             var monthlyDistances = new List<MonthlyUserDistance>
             {
@@ -371,7 +346,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = currentMonth,
                     TotalDistanceKm = 525.0, // Includes all journeys this month
                     JourneyCount = 3,
-                    AverageSpeedKmh = 289.0, // Average across different transport types
                     CreatedAt = now
                 },
                 
@@ -384,7 +358,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = lastMonth,
                     TotalDistanceKm = 325.5,
                     JourneyCount = 5,
-                    AverageSpeedKmh = 45.0,
                     CreatedAt = now
                 },
                 
@@ -397,7 +370,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = currentMonth,
                     TotalDistanceKm = 78.2, // Just the mountain trip
                     JourneyCount = 1,
-                    AverageSpeedKmh = 65.0,
                     CreatedAt = now
                 },
                 
@@ -410,14 +382,12 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     Month = currentMonth,
                     TotalDistanceKm = 19.8, // Just below the badge threshold
                     JourneyCount = 4,
-                    AverageSpeedKmh = 5.0,
                     CreatedAt = now
                 }
             };
             
             dbContext.MonthlyUserDistances.AddRange(monthlyDistances);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample monthly user distances created successfully");
         }
 
         private static async Task SeedJourneyFavoritesAsync(AppDbContext dbContext, ILogger logger)
@@ -425,11 +395,8 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if favorites already exist
             if (await dbContext.JourneyFavorites.AnyAsync())
             {
-                logger.LogInformation("Sample journey favorites already exist");
                 return;
             }
-            
-            logger.LogInformation("Creating sample journey favorites");
             
             var favorites = new List<JourneyFavorite>
             {
@@ -460,7 +427,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.JourneyFavorites.AddRange(favorites);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample journey favorites created successfully");
         }
 
         private static async Task SeedPublicLinksAsync(AppDbContext dbContext, ILogger logger)
@@ -468,11 +434,8 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if public links already exist
             if (await dbContext.PublicLinks.AnyAsync())
             {
-                logger.LogInformation("Sample public links already exist");
                 return;
             }
-            
-            logger.LogInformation("Creating sample public links");
             
             var publicLinks = new List<PublicLink>
             {
@@ -501,7 +464,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.PublicLinks.AddRange(publicLinks);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample public links created successfully");
         }
         
         private static async Task SeedOutboxMessagesAsync(AppDbContext dbContext, ILogger logger)
@@ -509,19 +471,15 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if outbox messages already exist
             if (await dbContext.OutboxMessages.AnyAsync())
             {
-                logger.LogInformation("Sample outbox messages already exist");
                 return;
             }
             
-            logger.LogInformation("Creating sample outbox messages");
-
             // First make sure the journeys exist
             var journey1 = await dbContext.Journeys.FindAsync(Journey1Id);
             var journey2 = await dbContext.Journeys.FindAsync(Journey2Id);
             
             if (journey1 == null || journey2 == null)
             {
-                logger.LogWarning("Required journeys for outbox messages not found");
                 return;
             }
 
@@ -569,7 +527,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.OutboxMessages.AddRange(outboxMessages);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample outbox messages created successfully");
         }
         
         private static async Task SeedDailyDistanceBadgesAsync(AppDbContext dbContext, ILogger logger)
@@ -577,15 +534,12 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if badges already exist
             if (await dbContext.DailyDistanceBadges.AnyAsync())
             {
-                logger.LogInformation("Sample daily distance badges already exist");
                 return;
             }
             
             // Use the same dates as journeys
             var today = DateTime.UtcNow.Date;
             var lastWeek = today.AddDays(-7);
-            
-            logger.LogInformation("Creating sample daily distance badges");
             
             var badges = new List<DailyDistanceBadge>
             {
@@ -625,7 +579,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.DailyDistanceBadges.AddRange(badges);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample daily distance badges created successfully");
         }
 
         private static async Task SeedUserStatusAuditsAsync(AppDbContext dbContext, ILogger logger)
@@ -633,7 +586,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             // Check if user status audits already exist
             if (await dbContext.UserStatusAudits.AnyAsync())
             {
-                logger.LogInformation("Sample user status audits already exist");
                 return;
             }
             
@@ -641,8 +593,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             bool adminExists = await dbContext.Users.AnyAsync(u => u.Id == AdminUserId);
             if (!adminExists)
             {
-                logger.LogWarning("Admin user not found. Cannot create user status audits with non-existent admin ID.");
-                
                 // Create the admin user if it doesn't exist
                 var adminUser = new ApplicationUser
                 {
@@ -657,7 +607,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                 
                 dbContext.Users.Add(adminUser);
                 await dbContext.SaveChangesAsync();
-                logger.LogInformation("Admin user created for user status auditing");
             }
             
             // Verify that users being referenced exist
@@ -666,12 +615,9 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             if (!thirdUserExists || !secondUserExists)
             {
-                logger.LogWarning("Required users for status audits don't exist. Skipping audit creation.");
                 return;
             }
             
-            logger.LogInformation("Creating sample user status audits");
-
             // Create audit records for user status changes
             var userStatusAudits = new List<UserStatusAudit>
             {
@@ -714,7 +660,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             
             dbContext.UserStatusAudits.AddRange(userStatusAudits);
             await dbContext.SaveChangesAsync();
-            logger.LogInformation("Sample user status audits created successfully");
         }
     }
 } 

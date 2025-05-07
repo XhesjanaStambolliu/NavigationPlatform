@@ -90,8 +90,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.UpdateJourne
         public async Task<ApiResponse> Handle(UpdateJourneyCommand request, CancellationToken cancellationToken)
         {
             var userId = _currentUserService.UserId;
-            _logger.LogInformation("Handling UpdateJourneyCommand for journey {JourneyId} by user {UserId}", 
-                request.Id, userId);
                 
             var journey = await _context.Journeys
                 .FirstOrDefaultAsync(j => j.Id == request.Id && !j.IsDeleted, cancellationToken);
@@ -124,7 +122,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.UpdateJourne
             journey.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);
-            _logger.LogInformation("Successfully updated journey {JourneyId}", request.Id);
 
             // Publish domain event
             await _eventPublisher.PublishAsync(new JourneyUpdatedEvent(journey, userId), cancellationToken);

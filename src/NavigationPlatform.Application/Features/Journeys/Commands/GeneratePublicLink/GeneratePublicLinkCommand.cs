@@ -85,9 +85,6 @@ namespace NavigationPlatform.Application.Features.Journeys.Commands.GeneratePubl
             _context.PublicLinks.Add(publicLink);
             await _context.SaveChangesAsync(cancellationToken);
 
-            _logger.LogInformation("User {UserId} generated a public link for journey {JourneyId}", 
-                currentUserId, request.JourneyId);
-
             return ApiResponse<string>.CreateSuccess(
                 token,
                 "Public link generated successfully"

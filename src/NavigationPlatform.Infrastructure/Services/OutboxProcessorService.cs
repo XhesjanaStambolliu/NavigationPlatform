@@ -24,8 +24,6 @@ namespace NavigationPlatform.Infrastructure.Services
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("Outbox processor service is starting");
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
@@ -40,8 +38,6 @@ namespace NavigationPlatform.Infrastructure.Services
                 // Wait for the next polling interval
                 await Task.Delay(_options.PollingInterval, stoppingToken);
             }
-
-            _logger.LogInformation("Outbox processor service is stopping");
         }
 
         private async Task ProcessOutboxMessagesAsync(CancellationToken stoppingToken)

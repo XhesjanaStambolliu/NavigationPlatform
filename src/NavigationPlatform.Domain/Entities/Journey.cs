@@ -52,8 +52,6 @@ namespace NavigationPlatform.Domain.Entities
             }
         }
         
-        public double? AverageSpeedKmh { get; set; }
-        
         public bool IsPublic { get; set; }
         
         [MaxLength(1000)]

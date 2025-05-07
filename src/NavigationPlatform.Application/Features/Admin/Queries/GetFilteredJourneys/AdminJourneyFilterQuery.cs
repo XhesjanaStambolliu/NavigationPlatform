@@ -153,7 +153,6 @@ namespace NavigationPlatform.Application.Features.Admin.Queries.GetFilteredJourn
                 ArrivalTime = j.ArrivalTime,
                 TransportType = j.TransportType,
                 DistanceKm = j.DistanceKm,
-                AverageSpeedKmh = j.AverageSpeedKmh,
                 IsPublic = j.IsPublic,
                 RouteDataUrl = j.RouteDataUrl,
                 CreatedAt = j.CreatedAt,

@@ -74,10 +74,6 @@ namespace NavigationPlatform.Application.Features.Admin.Commands.ChangeUserStatu
                 // Save changes
                 await _dbContext.SaveChangesAsync(cancellationToken);
                 
-                _logger.LogInformation(
-                    "User {UserId} status changed from {OldStatus} to {NewStatus} by admin {AdminId}",
-                    user.Id, oldStatus, request.Status, request.AdminId);
-                
                 return ApiResponse<bool>.CreateSuccess(true);
             }
             catch (Exception ex)

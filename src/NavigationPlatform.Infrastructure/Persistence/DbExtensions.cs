@@ -20,7 +20,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
                     b => b.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName));
                 
                 // Add database metrics interceptor if available
-                // Note: The interceptor will be registered by the API project to avoid circular dependencies
                 var interceptors = provider.GetServices<DbCommandInterceptor>();
                 foreach (var interceptor in interceptors)
                 {
@@ -39,7 +38,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
 
             try
             {
-                logger.LogInformation("Initializing database...");
                 var context = services.GetRequiredService<AppDbContext>();
 
                 // Apply migrations
@@ -52,7 +50,6 @@ namespace NavigationPlatform.Infrastructure.Persistence
             {
                 logger.LogError(ex, "An error occurred while initializing the database");
                 // Swallow the exception to avoid crashing the app
-                // The app should continue to run and retry later
             }
         }
 
@@ -60,25 +57,9 @@ namespace NavigationPlatform.Infrastructure.Persistence
         {
             try
             {
-                logger.LogInformation("Applying database migrations...");
+                logger.LogInformation("Applying database migrations");
                 await context.Database.MigrateAsync();
-            }
-            catch (SqlException ex) when (ex.Number == 2714)
-            {
-                // Handle object already exists error (common during parallel deployments)
-                logger.LogWarning(ex, "Database schema conflict detected during migration");
-                
-                // Option to reset database if enabled
-                if (Environment.GetEnvironmentVariable("RESET_DATABASE_ON_MIGRATION_ERROR")?.ToLower() == "true")
-                {
-                    logger.LogWarning("Resetting database due to migration conflicts...");
-                    await context.Database.EnsureDeletedAsync();
-                    await context.Database.EnsureCreatedAsync();
-                }
-                else
-                {
-                    logger.LogWarning("Migration error occurred but database reset is disabled");
-                }
+                logger.LogInformation("Database migrations applied successfully");
             }
             catch (Exception ex)
             {
